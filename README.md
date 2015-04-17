@@ -5,7 +5,7 @@ A Nintendo NES Tile Editor
 --------------------------
 
 This project is an attempt to bring Ken Hanson's "Tile Molester" NES
-CHS file editor into a modern build system.
+CHR file editor into a modern build system.
 
 Building
 --------
