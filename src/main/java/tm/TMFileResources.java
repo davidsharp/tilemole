@@ -349,7 +349,7 @@ public class TMFileResources {
             name = name.substring(0, i);
         }
         name += ".xml";
-        return new File("./resources/"+name);
+        return new File(name);
     }
 
     private Element getChildTag(Element e, String Tag, int i) {

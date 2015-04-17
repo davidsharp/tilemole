@@ -1,6 +1,6 @@
 build
-settings.xml
 .gradle
 .idea
 *.class
 *.iml
+*.xml
