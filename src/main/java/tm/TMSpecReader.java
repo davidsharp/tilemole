@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
@@ -64,7 +65,7 @@ public class TMSpecReader {
         filelisteners = new Vector();
         Document doc = null;
         try {
-            doc = XMLParser.parse(file);
+            doc = XMLParser.parse(new FileInputStream(file), "/tmspec.dtd");
         } catch (SAXException e) {
             throw e;
         }

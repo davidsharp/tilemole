@@ -29,6 +29,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import java.io.File;
 import java.io.IOException;
+import java.io.FileInputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
@@ -78,7 +79,7 @@ public class TMFileResources {
     throws SAXException, ParserConfigurationException, IOException {
         Document doc = null;
         try {
-            doc = XMLParser.parse(file);
+            doc = XMLParser.parse(new FileInputStream(file), "/tmspec.dtd");
         } catch (SAXException e) {
             throw e;
         }

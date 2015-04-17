@@ -689,7 +689,7 @@ public class TMUI extends JFrame {
     public void loadSettings() {
         Document doc = null;
         try {
-            doc = XMLParser.parse(settingsFile);
+            doc = XMLParser.parse(new FileInputStream(settingsFile), "/settings.dtd");
         }
         catch (Exception e) {
             JOptionPane.showMessageDialog(this,

@@ -22,6 +22,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.w3c.dom.Node;
@@ -29,15 +32,24 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Document;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class XMLParser {
 
-    public static Document parse(File file) throws SAXException, SAXParseException, ParserConfigurationException, IOException {
+    public static Document parse(InputStream inputStream, final String dtdResource)
+            throws SAXException, SAXParseException, ParserConfigurationException, IOException
+    {
         Document document=null;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
         factory.setValidating(true);
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
+            builder.setEntityResolver(new EntityResolver() {
+                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+                    return new InputSource(getClass().getResourceAsStream(dtdResource));
+                }
+            });
             builder.setErrorHandler(
               new org.xml.sax.ErrorHandler() {      // ignore fatal errors (an exception is guaranteed)
                   public void fatalError(SAXParseException exception)
@@ -60,7 +72,7 @@ public class XMLParser {
                   }
               }
             );
-            document = builder.parse(file);  // parse file
+            document = builder.parse(inputStream);  // parse file
         } catch (SAXParseException spe) {
             throw spe;
         } catch (SAXException sxe) {
