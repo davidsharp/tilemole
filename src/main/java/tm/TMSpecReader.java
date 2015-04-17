@@ -28,9 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
@@ -56,7 +54,7 @@ public class TMSpecReader {
 *
 **/
 
-    public static void readSpecsFromFile(File file)
+    public static void readSpecs(InputStream inputStream)
     throws SAXException, ParserConfigurationException, IOException {
         colorcodecs = new Vector();
         tilecodecs = new Vector();
@@ -65,7 +63,7 @@ public class TMSpecReader {
         filelisteners = new Vector();
         Document doc = null;
         try {
-            doc = XMLParser.parse(new FileInputStream(file), "/tmspec.dtd");
+            doc = XMLParser.parse(inputStream, "/tmspec.dtd");
         } catch (SAXException e) {
             throw e;
         }

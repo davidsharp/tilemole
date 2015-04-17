@@ -1,4 +1,5 @@
 build
+settings.xml
 .gradle
 .idea
 *.class

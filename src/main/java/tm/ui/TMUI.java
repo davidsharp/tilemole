@@ -33,12 +33,14 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
 import javax.swing.border.*;
 import javax.swing.filechooser.FileFilter;
-import java.util.Locale;
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -68,6 +70,8 @@ public class TMUI extends JFrame {
     public static final int FILL_TOOL = 6;
     public static final int REPLACE_TOOL = 7;
     public static final int MOVE_TOOL = 8;
+
+    private static final String LANGUAGE_RESOURCE_DIR = "languages";
 
     private int tool = SELECT_TOOL;
     private int previousTool;
@@ -467,7 +471,7 @@ public class TMUI extends JFrame {
 
 ///////// Read specs
         try {
-            TMSpecReader.readSpecsFromFile(new File("tmspec.xml"));
+            TMSpecReader.readSpecs(getClass().getResourceAsStream("/tmspec.xml"));
         }
         catch (SAXParseException e) {
             JOptionPane.showMessageDialog(this,
@@ -4673,6 +4677,55 @@ public class TMUI extends JFrame {
         return ccs;
     }
 
+    private boolean isLanguageProperty(String name) {
+        return (name.toLowerCase().startsWith("language")
+                && (name.indexOf('_') != -1)
+                && name.toLowerCase().endsWith(".properties"));
+    }
+
+    /*
+     * @return A list of supported Locale property file names.
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    public String[] getLocalePropertyNames() {
+        URL url = getClass().getClassLoader().getResource(LANGUAGE_RESOURCE_DIR);
+        Set<String> result = new HashSet<String>();
+
+        try {
+            if (url.getProtocol().equals("jar")) {
+                String jarPath = url.getPath().substring(5, url.getPath().indexOf("!"));
+                JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+
+                Enumeration<JarEntry> entries = jar.entries();
+
+                while (entries.hasMoreElements()) {
+                    String entryName = entries.nextElement().getName();
+                    if (entryName.startsWith(LANGUAGE_RESOURCE_DIR)) {
+                        String propName = entryName.substring(LANGUAGE_RESOURCE_DIR.length() + 1);
+                        if (isLanguageProperty(propName)) {
+                            result.add(propName);
+                        }
+                    }
+                }
+            } else {
+                File parentDirectory = new File(url.toURI());
+                File[] children = parentDirectory.listFiles();
+                for (File f : children) {
+                    String name = f.getName();
+                    if (isLanguageProperty(name)) {
+                        result.add(name);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return result.toArray(new String[result.size()]);
+    }
+
+
 /**
 *
 * Lets the user select a locale from a combobox.
@@ -4681,14 +4734,15 @@ public class TMUI extends JFrame {
 
     public void selectLanguage() {
         // figure out available translations
-        File dir = new File("./languages");
-        File[] files = dir.listFiles(new PropertiesFilter());
-        if ((files != null) && (files.length > 0)) {
-            Locale[] locales = new Locale[files.length];
+
+        String[] localeProps = getLocalePropertyNames();
+
+        if (localeProps.length > 0) {
+            Locale[] locales = new Locale[localeProps.length];
             String[] displayNames = new String[locales.length];
             int defaultIndex=0;
-            for (int i=0; i<files.length; i++) {
-                String name = files[i].getName();
+            for (int i=0; i<localeProps.length; i++) {
+                String name = localeProps[i];
                 String language = name.substring(name.indexOf('_')+1, name.lastIndexOf('_'));
                 String country = name.substring(name.lastIndexOf('_')+1, name.lastIndexOf('.'));
                 locales[i] = new Locale(language, country);
