@@ -1,0 +1,12 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+version = '0.16.1'
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'TileMolester',
+                   'Implementation-Title': 'Tile Molester',
+                   'Implementation-Version': version
+    }
+}
