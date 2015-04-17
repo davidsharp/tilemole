@@ -63,7 +63,7 @@ public class TMSplashScreen extends JWindow {
         Runnable waitRunner = new Runnable() {
             public void run() {
                 try {
-                    Thread.sleep(8000);     // 8 secs
+                    Thread.sleep(2000);     // 2 secs
                     SwingUtilities.invokeAndWait(closerRunner);
                 }
                 catch(Exception e) {

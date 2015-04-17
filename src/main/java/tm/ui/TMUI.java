@@ -631,9 +631,8 @@ public class TMUI extends JFrame {
 
         toolBarPane.setVisible(viewToolBar);
 
-        // Show and maximize.
+        // Show
         setVisible(true);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
 /**
